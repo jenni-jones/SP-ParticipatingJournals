@@ -1,0 +1,41 @@
+library(shiny)
+library(tidyverse)
+library(DT)
+
+ui <- fluidPage(
+  titlePanel(img(src = "logo.png", align = "top", width = "350")),
+    fluidRow(br()),
+      p("The following 200+ SAGE journals participate in ",
+      a("SAGE Path", 
+        href = "https://mc.manuscriptcentral.com/sagepath"),
+        "a free-of-charge article transfer service (Last updated: Aug 15, 2019)."), column(1),
+    br(),
+    p("For additional information or to check if the journal is listed in the following indexes, check the journal website: PsycINFO, EBSCO, ProQuest, and ERIC."), column(1),
+    fluidRow(DTOutput("participatingjournals"))
+)
+
+
+
+
+server <- function(input, output) {
+  
+  participatingjournals <- read.csv("participatingjournals.csv")
+  participatingjournals <- participatingjournals[participatingjournals$SAGE.Path.Status == "Included",]
+  participatingjournals <- subset(participatingjournals, select = -c(TLA, 
+                                                                     SPIN.Major.Disciplines.Combined,
+                                                                     SAGE.Path.Status))
+  colnames(participatingjournals) <- c("Journal", "Primary Discipline", "Impact Factor?", "Other Indexing",
+                                       "Gold Open Access?","APC, IF OA")
+
+  output$participatingjournals <- renderDT({
+    datatable(participatingjournals,
+              options = list(pageLength = nrow(participatingjournals),
+                             lengthChange = FALSE),
+              rownames = FALSE,
+              escape = 2,
+              filter = "none")
+  })
+  
+}
+
+shinyApp(ui, server)
