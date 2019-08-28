@@ -3,7 +3,8 @@ library(tidyverse)
 library(DT)
 
 ui <- fluidPage(
-  titlePanel(img(src = "logo.png", align = "top", width = "350")),
+  h1
+  (img(src = "logo.png", align = "top", width = "350")),
     fluidRow(br()),
       p("The following 200+ SAGE journals participate in ",
       a("SAGE Path", 
